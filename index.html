@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Laudo Técnico de Atendimento | NORS</title>
+
+<style>
+:root{
+  --preto:#222;
+  --cinza:#666;
+  --cinza-claro:#e9e9e9;
+  --cinza-fundo:#f5f5f5;
+  --azul:#1676a8;
+  --borda:#222;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:0;
+  background:#e9e9e9;
+  color:var(--preto);
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{padding:24px}
+
+button,input,textarea{font:inherit}
+
+.toolbar{
+  max-width:210mm;
+  margin:0 auto 14px;
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.toolbar button{
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  background:#222;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.toolbar .primary{background:var(--azul)}
+
+.document{
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  background:#fff;
+  box-shadow:0 4px 18px rgba(0,0,0,.16);
+}
+
+.page{
+  width:210mm;
+  min-height:297mm;
+  padding:8mm 6mm 10mm;
+  background:#fff;
+  position:relative;
+  page-break-after:always;
+  break-after:page;
+}
+
+.page:last-child{
+  page-break-after:auto;
+  break-after:auto;
+}
+
+.top-header{
+  height:36mm;
+  border:1.5px solid var(--borda);
+  display:flex;
+  align-items:stretch;
+}
+
+.logo{
+  width:34%;
+  display:flex;
+  align-items:center;
+  padding:10mm;
+}
+
+.logo span{
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-2px;
+  color:#111;
+}
+
+.header-info{
+  width:66%;
+  border-left:1.5px solid var(--borda);
+  padding:4mm 5mm;
+  text-align:right;
+  font-size:10.5px;
+  line-height:1.35;
+  font-weight:700;
+}
+
+.box{
+  border:1.5px solid var(--borda);
+  margin-top:5mm;
+}
+
+.box-title{
+  min-height:6mm;
+  padding:1.2mm 2mm;
+  text-align:center;
+  background:#e3e3e3;
+  border-bottom:1.5px solid var(--borda);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11px;
+  font-weight:700;
+}
+
+.box-body{padding:2mm}
+
+.grid{
+  display:grid;
+  gap:0;
+}
+
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.grid-5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+
+.field{
+  min-height:8mm;
+  padding:1mm 1.5mm;
+  border-right:1px solid #999;
+}
+
+.field:last-child{border-right:0}
+
+.field label{
+  font-weight:700;
+  font-size:10px;
+}
+
+.field .value{
+  display:inline;
+  min-width:20px;
+  outline:none;
+  font-size:10px;
+}
+
+.full{grid-column:1/-1}
+
+.textarea{
+  min-height:64mm;
+  padding:2mm;
+  font-size:10px;
+  line-height:1.35;
+  outline:none;
+  white-space:pre-wrap;
+}
+
+.textarea strong{font-weight:700}
+
+/* FOTOS — somente imagem + descrição */
+.photo-intro{
+  margin:0 2mm;
+  padding:3mm;
+  background:#f5f5f5;
+  border-bottom:1px solid #ccc;
+  font-size:10px;
+  line-height:1.45;
+  color:#555;
+}
+
+.photo-intro strong{color:var(--azul)}
+
+.photo-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5mm;
+  padding:4mm 2mm 5mm;
+}
+
+.photo-card{
+  border:1px solid #777;
+  break-inside:avoid;
+  page-break-inside:avoid;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+}
+
+.photo{
+  height:62mm;
+  position:relative;
+  background:#f0f0f0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.photo img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:none;
+  background:#fff;
+}
+
+.photo.has-image img{display:block}
+
+.photo.has-image .photo-placeholder{
+  display:none;
+}
+
+.photo.has-image{
+  background:#fff;
+  cursor:pointer;
+}
+
+.photo-placeholder{
+  text-align:center;
+  color:#777;
+  font-size:11px;
+  padding:5mm;
+}
+
+.photo-placeholder strong{
+  display:block;
+  font-size:18px;
+  color:#555;
+  margin-bottom:3mm;
+}
+
+.photo-actions{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  flex-wrap:wrap;
+  padding:6px;
+  background:#fafafa;
+  border-top:1px solid #ccc;
+}
+
+.photo-actions label,
+.photo-actions button{
+  border:0;
+  border-radius:5px;
+  padding:7px 10px;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+  background:var(--azul);
+  color:#fff;
+}
+
+.photo-actions button.clear{background:#222}
+.photo-actions button.delete{background:#8b1e1e}
+
+.photo-actions input{display:none}
+
+.photo-card:has(.photo.has-image) .photo-actions{
+  display:none;
+}
+
+.caption{
+  width:100%;
+  min-height:15mm;
+  padding:2.5mm;
+  border:0;
+  border-top:1px solid #777;
+  text-align:left;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:10px;
+  line-height:1.35;
+  outline:none;
+  resize:vertical;
+  background:#fff;
+}
+
+.caption::placeholder{color:#999}
+
+.add-photo-area{
+  margin:0 2mm 5mm;
+  padding:4mm;
+  border:1px dashed #aaa;
+  background:#fafafa;
+  text-align:center;
+}
+
+.add-photo-btn{
+  border:0;
+  border-radius:5px;
+  padding:9px 14px;
+  background:var(--azul);
+  color:#fff;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.add-photo-area span{
+  display:block;
+  margin-top:2mm;
+  color:#777;
+  font-size:9px;
+}
+
+/* COMENTÁRIOS E ASSINATURAS */
+.comment-box{
+  min-height:44mm;
+  border:1.5px solid var(--borda);
+}
+
+.comment-body{
+  padding:3mm;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:10px;
+  line-height:1.45;
+  outline:none;
+}
+
+.signature-section{margin-top:5mm}
+
+.signature-box{
+  border:1.5px solid var(--borda);
+  min-height:67mm;
+}
+
+.signature-title{
+  text-align:center;
+  background:#e3e3e3;
+  border-bottom:1.5px solid var(--borda);
+  padding:1.5mm;
+  font-family:Georgia,"Times New Roman",serif;
+  font-weight:700;
+  font-size:11px;
+}
+
+.signature-content{padding:3mm}
+
+.signature-pad-preview{
+  height:30mm;
+  border-bottom:1px solid #555;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:2mm 18mm;
+}
+
+.signature-pad-preview img{
+  max-height:29mm;
+  max-width:100%;
+  display:none;
+}
+
+.signature-pad-preview.has-signature img{display:block}
+
+.signature-placeholder{
+  color:#999;
+  font-size:10px;
+}
+
+.signature-pad-preview.has-signature .signature-placeholder{
+  display:none;
+}
+
+.signature-actions{
+  text-align:center;
+  margin-top:2mm;
+}
+
+.sign-btn{
+  border:0;
+  background:var(--azul);
+  color:#fff;
+  padding:10px 15px;
+  border-radius:6px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.signature-meta{
+  text-align:center;
+  font-size:9px;
+  color:#555;
+  margin-top:2mm;
+}
+
+.customer-box{min-height:86mm}
+
+.small-note{
+  font-size:9px;
+  color:#555;
+  margin-top:2mm;
+}
+
+.editable:focus,
+.field .value:focus,
+.caption:focus,
+.comment-body:focus,
+.textarea:focus{
+  background:#fffde8;
+}
+
+/* MODAL DE ASSINATURA — touch / caneta / mouse */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:rgba(0,0,0,.72);
+  align-items:center;
+  justify-content:center;
+  padding:12px;
+}
+
+.modal.open{display:flex}
+
+.signature-modal{
+  width:min(760px,100%);
+  background:#fff;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 15px 50px rgba(0,0,0,.35);
+}
+
+.modal-head{
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid #ddd;
+}
+
+.modal-head strong{font-size:17px}
+
+.close{
+  border:0;
+  background:#eee;
+  border-radius:6px;
+  padding:7px 10px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.canvas-wrap{
+  padding:12px;
+  background:#f2f2f2;
+}
+
+#signatureCanvas{
+  display:block;
+  width:100%;
+  height:280px;
+  background:#fff;
+  border:2px dashed #aaa;
+  border-radius:8px;
+  touch-action:none;
+  cursor:crosshair;
+}
+
+.modal-help{
+  text-align:center;
+  font-size:12px;
+  color:#666;
+  padding:8px;
+}
+
+.modal-actions{
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  padding:12px;
+  border-top:1px solid #ddd;
+}
+
+.modal-actions button{
+  border:0;
+  border-radius:7px;
+  padding:11px 16px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn-clear{background:#eee}
+.btn-cancel{background:#ddd}
+.btn-save{background:var(--azul);color:#fff}
+
+/* RESPONSIVO */
+@media(max-width:900px){
+  body{padding:8px}
+  .document,.page{width:210mm}
+  .toolbar{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:#e9e9e9;
+    padding:7px;
+  }
+}
+
+@media(max-width:700px){
+  .photo-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:600px){
+  body{padding:0;background:#fff}
+
+  .toolbar{
+    position:sticky;
+    top:0;
+    margin:0;
+    padding:8px;
+    background:#222;
+  }
+
+  .toolbar button{
+    font-size:12px;
+    padding:9px 11px;
+  }
+
+  .document{box-shadow:none}
+
+  .modal{
+    padding:0;
+    align-items:stretch;
+  }
+
+  .signature-modal{
+    width:100%;
+    height:100%;
+    border-radius:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .canvas-wrap{
+    flex:1;
+    display:flex;
+    align-items:center;
+  }
+
+  #signatureCanvas{
+    height:calc(100vh - 190px);
+    min-height:260px;
+  }
+
+  .modal-actions{
+    padding-bottom:max(12px,env(safe-area-inset-bottom));
+  }
+}
+
+/* IMPRESSÃO / PDF */
+@media print{
+  @page{size:A4;margin:0}
+
+  html,body{
+    background:#fff!important;
+  }
+
+  body{
+    padding:0!important;
+  }
+
+  .toolbar{
+    display:none!important;
+  }
+
+  .document{
+    width:210mm!important;
+    box-shadow:none!important;
+    margin:0!important;
+  }
+
+  .page{
+    width:210mm!important;
+    min-height:297mm!important;
+    padding:8mm 6mm 10mm!important;
+  }
+
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+
+  .photo-actions,
+  .add-photo-area,
+  .sign-btn{
+    display:none!important;
+  }
+
+  .editable:focus,
+  .field .value:focus,
+  .caption:focus,
+  .comment-body:focus,
+  .textarea:focus{
+    background:transparent!important;
+  }
+
+  .photo-card{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="toolbar">
+  <button type="button" class="primary" onclick="abrirImpressao(event)">🖨 Imprimir / Salvar PDF</button>
+  <button type="button" onclick="abrirAssinatura('cliente')">✍ Assinar cliente</button>
+  <button type="button" onclick="abrirAssinatura('tecnico')">✍ Assinar técnico</button>
+</div>
+
+<div class="document">
+
+  <!-- PÁGINA 1 — MODELO DO LAUDO TÉCNICO -->
+  <section class="page">
+
+    <div class="top-header">
+      <div class="logo"><span>NORS</span></div>
+
+      <div class="header-info">
+        <div contenteditable="true">AV. FERNANDO CORREA DA COSTA, nº 02360</div>
+        <div contenteditable="true">CUIABÁ - MT - BRASIL - CEP 78070-140</div>
+        <div contenteditable="true">Fone: +55 (65) 3618-1330</div>
+        <div contenteditable="true">Data de Abertura da OS: 15/07/2026 13:19</div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">RELATÓRIO TÉCNICO DE ATENDIMENTO</div>
+
+      <div class="box-body grid grid-3">
+        <div class="field">
+          <label>Data do Atendimento:</label>
+          <span class="value" contenteditable="true">22/07/2026</span>
+        </div>
+
+        <div class="field">
+          <label>Técnico:</label>
+          <span class="value" contenteditable="true">ANDERSON DOS SANTOS CORREA</span>
+        </div>
+
+        <div class="field">
+          <label>No OS:</label>
+          <span class="value" contenteditable="true">00200039523-001</span>
+        </div>
+
+        <div class="field full">
+          <label>Especialidade:</label>
+          <span class="value" contenteditable="true"></span>
+        </div>
+
+        <div class="field full">
+          <label>Tipo de OS:</label>
+          <span class="value" contenteditable="true">ACORDO DE MANUTENÇÃO - FATURA DE SERVIÇOS 01-08-24</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">INFORMAÇÕES DO CLIENTE</div>
+
+      <div class="box-body grid grid-2">
+        <div class="field">
+          <label>Nome do Contato:</label>
+          <span class="value" contenteditable="true">Contato Principal</span>
+        </div>
+
+        <div class="field">
+          <label>Empresa:</label>
+          <span class="value" contenteditable="true">EMAL EMPRESA DE MINERACAO ARIPUANA LTDA</span>
+        </div>
+
+        <div class="field">
+          <label>Telefone:</label>
+          <span class="value" contenteditable="true"></span>
+        </div>
+
+        <div class="field">
+          <label>E-mail:</label>
+          <span class="value" contenteditable="true">contabilidade@emal.com.br;compras@emal.com.br</span>
+        </div>
+
+        <div class="field full">
+          <label>Endereço:</label>
+          <span class="value" contenteditable="true">ROD MT 246 - Barra do Bugres / Mato Grosso</span>
+        </div>
+
+        <div class="field full">
+          <label>Descrição da OS:</label>
+          <span class="value" contenteditable="true"></span>
+        </div>
+
+        <div class="field full">
+          <label>Status do Equipamento:</label>
+          <span class="value" contenteditable="true">Máquina Parada Aguardando Peça</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">INFORMAÇÕES DOS EQUIPAMENTOS</div>
+
+      <div class="box-body grid grid-5">
+        <div class="field">
+          <label>Nro de Série</label><br>
+          <span class="value" contenteditable="true">73960</span>
+        </div>
+
+        <div class="field">
+          <label>Marca</label><br>
+          <span class="value" contenteditable="true">VOLVO</span>
+        </div>
+
+        <div class="field">
+          <label>Modelo</label><br>
+          <span class="value" contenteditable="true">L120F</span>
+        </div>
+
+        <div class="field">
+          <label>Horímetro</label><br>
+          <span class="value" contenteditable="true">11441</span>
+        </div>
+
+        <div class="field">
+          <label>Máquina Parada</label><br>
+          <span class="value" contenteditable="true">Não</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="box">
+      <div class="box-title">DESCRIÇÃO DO SERVIÇO</div>
+
+      <div class="textarea" contenteditable="true">
+<strong>Descritivo do Serviço:</strong>
+Equipamento foi estacionado em lugar seguro e plano, freio estacionário acionado, chave geral desligada. Foi realizado todo procedimento de mão de obra relacionado à revisão, conforme as normas do manual do fabricante.
+
+<strong>Obs.:</strong>
+
+<strong>Sintoma(s):</strong>
+
+<strong>Causa(s):</strong>
+
+<strong>Solução(ões):</strong>
+
+<strong>Foi retirada leitura de Matris?</strong>
+
+<strong>Observação:</strong>
+
+<strong>Foi interpretado o Matris?</strong>
+
+<strong>Detalhes Relevantes:</strong>
+
+<strong>Cliente solicita receber a leitura de Matris:</strong>
+
+<strong>Observação:</strong>
+
+<strong>Foi coletado material para análise de óleo?</strong>
+
+<strong>Detalhes Relevantes:</strong>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- PÁGINA 2 — FOTOS -->
+  <section class="page">
+
+    <div class="box" style="margin-top:0">
+
+      <div class="box-title">FOTOS</div>
+
+      <div class="photo-intro">
+        <strong>Adicione quantas fotos forem necessárias.</strong>
+        Para cada imagem, informe abaixo o que está sendo demonstrado, o componente, a condição encontrada ou a etapa do serviço.
+      </div>
+
+      <div id="photoContainer" class="photo-grid"></div>
+
+      <div class="add-photo-area">
+        <button type="button" class="add-photo-btn" onclick="adicionarFoto()">
+          ＋ ADICIONAR NOVA FOTO
+        </button>
+        <span>Você pode adicionar quantas evidências forem necessárias.</span>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- PÁGINA 3 — COMENTÁRIOS E ASSINATURA DO TÉCNICO -->
+  <section class="page">
+
+    <div class="box">
+      <div class="box-title">COMENTÁRIOS DO TÉCNICO</div>
+
+      <div class="comment-body" contenteditable="true" style="min-height:45mm">
+Equipamento parado esperando Cardan dianteiro
+      </div>
+    </div>
+
+    <div class="signature-box signature-section">
+
+      <div class="signature-title">ASSINATURA DO TÉCNICO</div>
+
+      <div class="signature-content">
+
+        <div class="signature-pad-preview" id="techSignaturePreview">
+          <span class="signature-placeholder">Assinatura ainda não registrada</span>
+          <img id="techSignatureImage" alt="Assinatura do técnico">
+        </div>
+
+        <div class="signature-actions">
+          <button type="button" class="sign-btn" onclick="abrirAssinatura('tecnico')">
+            ✍ Assinar no celular / tablet
+          </button>
+        </div>
+
+        <div class="signature-meta" id="techSignatureMeta"></div>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- PÁGINA 4 — COMENTÁRIOS E ASSINATURA DO CLIENTE -->
+  <section class="page">
+
+    <div class="comment-box">
+
+      <div class="box-title">COMENTÁRIOS DO CLIENTE</div>
+
+      <div class="comment-body" contenteditable="true" style="min-height:75mm">
+
+"Os valores de km rodado e deslocamento (tempo de viagem do técnico) serão cobrados em todos os atendimentos, inclusive em garantia. Atendimentos fora do horário comercial (segunda-feira à sexta-feira, das 08hs às 18hs) serão acrescidos de taxa de hora extra."
+
+<br><br>
+
+<strong>Tempo de Execução das Tarefas:</strong> 04:11
+
+<br>
+
+<strong>Situação da Máquina após atendimento:</strong> Máquina Parada Aguardando Peça
+
+<br><br>
+
+Eu, <strong contenteditable="true">MAURÍCIO FAGNER DOS SANTOS</strong>
+CPF <strong contenteditable="true">00087093197</strong>,
+confirmo as informações descritas acima.
+
+      </div>
+    </div>
+
+    <div class="signature-box customer-box">
+
+      <div class="signature-title">ASSINATURA DO CLIENTE</div>
+
+      <div class="signature-content">
+
+        <p style="text-align:center;font-size:11px;font-weight:700;margin:1mm 0 3mm">
+          Assine diretamente na tela do celular, tablet ou computador.
+        </p>
+
+        <div class="signature-pad-preview" id="clientSignaturePreview" style="height:40mm">
+          <span class="signature-placeholder">Nenhuma assinatura registrada</span>
+          <img id="clientSignatureImage" alt="Assinatura do cliente">
+        </div>
+
+        <div class="signature-actions">
+          <button type="button" class="sign-btn" onclick="abrirAssinatura('cliente')">
+            ✍ CLIQUE AQUI PARA ASSINAR
+          </button>
+        </div>
+
+        <div class="signature-meta" id="clientSignatureMeta"></div>
+
+        <div class="small-note" style="text-align:center">
+          A assinatura é desenhada na tela e inserida no laudo antes da impressão ou geração do PDF.
+        </div>
+
+      </div>
+    </div>
+
+    <div class="box" style="margin-top:5mm">
+
+      <div class="box-title">IDENTIFICAÇÃO DA ASSINATURA DIGITAL</div>
+
+      <div class="box-body">
+
+        <div class="grid grid-2">
+
+          <div class="field">
+            <label>Nome:</label>
+            <span class="value" contenteditable="true"></span>
+          </div>
+
+          <div class="field">
+            <label>Documento:</label>
+            <span class="value" contenteditable="true"></span>
+          </div>
+
+          <div class="field">
+            <label>Data:</label>
+            <span class="value" id="signatureDate"></span>
+          </div>
+
+          <div class="field">
+            <label>Responsável pelo atendimento:</label>
+            <span class="value" contenteditable="true"></span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+</div>
+
+<!-- MODAL DE ASSINATURA -->
+<div class="modal" id="signatureModal" aria-hidden="true">
+
+  <div class="signature-modal">
+
+    <div class="modal-head">
+      <strong id="modalTitle">Assinatura digital</strong>
+      <button type="button" class="close" onclick="fecharAssinatura()">✕ Fechar</button>
+    </div>
+
+    <div class="modal-help">
+      Use o dedo, caneta touch ou mouse para assinar no quadro abaixo.
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="signatureCanvas"></canvas>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="btn-clear" onclick="limparAssinatura()">Limpar</button>
+      <button type="button" class="btn-cancel" onclick="fecharAssinatura()">Cancelar</button>
+      <button type="button" class="btn-save" onclick="salvarAssinatura()">✓ Confirmar assinatura</button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+let assinaturaTipo = 'cliente';
+let desenhando = false;
+let ultimo = {x:0,y:0};
+
+const canvas = document.getElementById('signatureCanvas');
+const ctx = canvas.getContext('2d');
+
+function prepararCanvas(){
+  const rect = canvas.getBoundingClientRect();
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+  canvas.width = Math.floor(rect.width * ratio);
+  canvas.height = Math.floor(rect.height * ratio);
+
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#111';
+}
+
+function posicao(e){
+  const r = canvas.getBoundingClientRect();
+  return {
+    x: e.clientX - r.left,
+    y: e.clientY - r.top
+  };
+}
+
+function iniciarDesenho(e){
+  e.preventDefault();
+  desenhando = true;
+  ultimo = posicao(e);
+
+  if(canvas.setPointerCapture){
+    try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
+  }
+}
+
+function desenhar(e){
+  if(!desenhando) return;
+
+  e.preventDefault();
+
+  const p = posicao(e);
+
+  ctx.beginPath();
+  ctx.moveTo(ultimo.x,ultimo.y);
+  ctx.lineTo(p.x,p.y);
+  ctx.stroke();
+
+  ultimo = p;
+}
+
+function terminarDesenho(e){
+  if(e) e.preventDefault();
+  desenhando = false;
+
+  if(e && canvas.releasePointerCapture){
+    try{ canvas.releasePointerCapture(e.pointerId); }catch(_){}
+  }
+}
+
+canvas.addEventListener('pointerdown', iniciarDesenho, {passive:false});
+canvas.addEventListener('pointermove', desenhar, {passive:false});
+canvas.addEventListener('pointerup', terminarDesenho, {passive:false});
+canvas.addEventListener('pointercancel', terminarDesenho, {passive:false});
+canvas.addEventListener('pointerleave', terminarDesenho, {passive:false});
+
+function abrirAssinatura(tipo){
+
+  assinaturaTipo = tipo;
+
+  document.getElementById('modalTitle').textContent =
+    tipo === 'cliente'
+      ? 'Assinatura digital do cliente'
+      : 'Assinatura digital do técnico';
+
+  const modal = document.getElementById('signatureModal');
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden','false');
+
+  document.body.style.overflow='hidden';
+
+  setTimeout(function(){
+    prepararCanvas();
+    limparAssinatura();
+  },100);
+}
+
+function fecharAssinatura(){
+
+  const modal = document.getElementById('signatureModal');
+
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden','true');
+
+  document.body.style.overflow='';
+  desenhando=false;
+}
+
+function limparAssinatura(){
+
+  ctx.clearRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+}
+
+function canvasVazio(){
+
+  const data =
+    ctx.getImageData(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    ).data;
+
+  for(let i=3;i<data.length;i+=4){
+    if(data[i] > 0) return false;
+  }
+
+  return true;
+}
+
+function salvarAssinatura(){
+
+  if(canvasVazio()){
+    alert('Faça a assinatura no quadro antes de confirmar.');
+    return;
+  }
+
+  const data = canvas.toDataURL('image/png');
+
+  if(assinaturaTipo === 'cliente'){
+
+    document.getElementById('clientSignatureImage').src = data;
+
+    document
+      .getElementById('clientSignaturePreview')
+      .classList.add('has-signature');
+
+    document.getElementById('clientSignatureMeta').textContent =
+      'Assinatura registrada em ' +
+      new Date().toLocaleString('pt-BR');
+
+  }else{
+
+    document.getElementById('techSignatureImage').src = data;
+
+    document
+      .getElementById('techSignaturePreview')
+      .classList.add('has-signature');
+
+    document.getElementById('techSignatureMeta').textContent =
+      'Assinatura registrada em ' +
+      new Date().toLocaleString('pt-BR');
+  }
+
+  document.getElementById('signatureDate').textContent =
+    new Date().toLocaleDateString('pt-BR');
+
+  fecharAssinatura();
+}
+
+window.addEventListener('resize',function(){
+
+  const modal =
+    document.getElementById('signatureModal');
+
+  if(!modal.classList.contains('open')) return;
+
+  const old =
+    canvas.toDataURL();
+
+  prepararCanvas();
+
+  const img = new Image();
+
+  img.onload = function(){
+    ctx.drawImage(
+      img,
+      0,
+      0,
+      canvas.getBoundingClientRect().width,
+      canvas.getBoundingClientRect().height
+    );
+  };
+
+  img.src = old;
+});
+
+/* FOTOS DINÂMICAS */
+let contadorFotos = 0;
+
+function adicionarFoto(){
+
+  contadorFotos++;
+
+  const numero =
+    String(contadorFotos).padStart(2,'0');
+
+  const areaId =
+    'photo' + contadorFotos;
+
+  const imgId =
+    'img' + contadorFotos;
+
+  const card =
+    document.createElement('div');
+
+  card.className = 'photo-card';
+  card.id = 'card-' + areaId;
+
+  card.innerHTML = `
+    <div class="photo" id="${areaId}">
+      <div class="photo-placeholder">
+        <strong>FOTO ${numero}</strong>
+        Selecione uma imagem
+      </div>
+
+      <img id="${imgId}" alt="Foto ${numero}">
+    </div>
+
+    <div class="photo-actions">
+
+      <label>
+        📷 Selecionar imagem
+        <input
+          type="file"
+          accept="image/*"
+          onchange="carregarFoto(this,'${areaId}','${imgId}')"
+        >
+      </label>
+
+      <button
+        type="button"
+        class="clear"
+        onclick="removerFoto('${areaId}','${imgId}')"
+      >
+        ✕ Limpar
+      </button>
+
+      <button
+        type="button"
+        class="delete"
+        onclick="excluirFoto('${areaId}')"
+      >
+        🗑 Excluir
+      </button>
+
+    </div>
+
+    <textarea
+      class="caption"
+      placeholder="Descreva esta foto: componente, local, condição encontrada, etapa do serviço ou outra informação relevante."
+    ></textarea>
+  `;
+
+  document
+    .getElementById('photoContainer')
+    .appendChild(card);
+
+  card.scrollIntoView({
+    behavior:'smooth',
+    block:'center'
+  });
+}
+
+function excluirFoto(areaId){
+
+  const card =
+    document.getElementById('card-' + areaId);
+
+  if(!card) return;
+
+  if(confirm('Excluir esta foto e a descrição vinculada a ela?')){
+    card.remove();
+  }
+}
+
+function carregarFoto(input,areaId,imgId){
+
+  const file =
+    input.files && input.files[0];
+
+  if(!file) return;
+
+  if(!file.type.startsWith('image/')){
+
+    alert('Selecione uma imagem válida.');
+
+    input.value='';
+
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload = function(e){
+
+    const area =
+      document.getElementById(areaId);
+
+    const img =
+      document.getElementById(imgId);
+
+    img.src = e.target.result;
+
+    area.classList.add('has-image');
+
+    const card = area.closest('.photo-card');
+    const actions = card ? card.querySelector('.photo-actions') : null;
+
+    if(actions){
+      actions.style.display = 'none';
+    }
+  };
+
+  reader.readAsDataURL(file);
+}
+
+/* Depois de carregada, tocar/clicar na própria foto permite trocar a imagem. */
+document.addEventListener('click', function(event){
+  const area = event.target.closest('.photo.has-image');
+
+  if(!area) return;
+
+  /* Não dispara ao clicar em elementos internos, caso existam no futuro. */
+  if(event.target !== area && event.target.tagName !== 'IMG') return;
+
+  const input = area.parentElement.querySelector('input[type="file"]');
+
+  if(input){
+    input.click();
+  }
+});
+
+function removerFoto(areaId,imgId){
+
+  const area =
+    document.getElementById(areaId);
+
+  const img =
+    document.getElementById(imgId);
+
+  img.src='';
+
+  area.classList.remove('has-image');
+
+  const card = area.closest('.photo-card');
+  const actions = card ? card.querySelector('.photo-actions') : null;
+
+  if(actions){
+    actions.style.display = '';
+  }
+
+  const input =
+    area.parentElement.querySelector(
+      'input[type=file]'
+    );
+
+  if(input) input.value='';
+}
+
+/* IMPRESSÃO / SALVAR PDF */
+function abrirImpressao(event){
+
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  if(document.activeElement &&
+     typeof document.activeElement.blur === 'function'){
+    document.activeElement.blur();
+  }
+
+  setTimeout(function(){
+
+    if(typeof window.print === 'function'){
+      window.focus();
+      window.print();
+    }else{
+      alert(
+        'A impressão não está disponível neste navegador. ' +
+        'Abra o laudo no Chrome, Edge ou Safari.'
+      );
+    }
+
+  },150);
+}
+
+/* Começa com uma foto */
+adicionarFoto();
+</script>
+
+</body>
+</html>
